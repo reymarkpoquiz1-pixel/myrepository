@@ -1,0 +1,60 @@
+body {
+  margin: 0;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f5f5;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+.signature-canvas {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.file-drop-zone {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.file-drop-zone:hover {
+  border-color: #1976d2;
+}
+
+.file-drop-zone.active {
+  border-color: #1976d2;
+  background-color: rgba(25, 118, 210, 0.1);
+}
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding: 24px;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 16px;
+  }
+}
