@@ -1,0 +1,21 @@
+{
+  "name": "council-esign-saas",
+  "version": "1.0.0",
+  "description": "SAAS platform for admin and councilors with e-signature functionality",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "server:dev": "cd server && nodemon index.js",
+    "client:dev": "cd client && npm start",
+    "build": "cd client && npm run build",
+    "start": "cd server && node index.js",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "setup": "npm run install:all"
+  },
+  "keywords": ["saas", "e-signature", "document-management", "council"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
