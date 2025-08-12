@@ -1,0 +1,36 @@
+version: '3.9'
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: civil_registry
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./migrations:/docker-entrypoint-initdb.d
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+    environment:
+      APP_ENV: development
+      APP_KEY: base64:BASE64_32_BYTE_KEY_HERE
+      SESSION_NAME: CRSID
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: civil_registry
+      DB_USER: root
+      DB_PASS: example
+      DB_CHARSET: utf8mb4
+      UPLOAD_MAX_MB: 100
+      ALLOWED_MIME: application/pdf,image/jpeg,image/png,text/plain
+    depends_on:
+      - db
+volumes:
+  db_data:
