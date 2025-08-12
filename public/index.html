@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archive Management System</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1><i class="fas fa-archive"></i> Archive System</h1>
+                <p>Please sign in to continue</p>
+            </div>
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="username">Username or Email</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+            <div id="login-error" class="alert alert-error" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="main-app" class="main-app" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-archive"></i> Archive System</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#dashboard" class="nav-link active" data-page="dashboard">
+                        <i class="fas fa-chart-dashboard"></i> Dashboard
+                    </a></li>
+                    <li><a href="#records" class="nav-link" data-page="records">
+                        <i class="fas fa-folder-open"></i> Records
+                    </a></li>
+                    <li><a href="#add-record" class="nav-link" data-page="add-record">
+                        <i class="fas fa-plus-circle"></i> Add Record
+                    </a></li>
+                    <li><a href="#attachments" class="nav-link" data-page="attachments">
+                        <i class="fas fa-paperclip"></i> Attachments
+                    </a></li>
+                    <li><a href="#reports" class="nav-link" data-page="reports">
+                        <i class="fas fa-chart-bar"></i> Reports
+                    </a></li>
+                    <li class="admin-only"><a href="#users" class="nav-link" data-page="users">
+                        <i class="fas fa-users"></i> Users
+                    </a></li>
+                    <li class="admin-only"><a href="#activity-logs" class="nav-link" data-page="activity-logs">
+                        <i class="fas fa-history"></i> Activity Logs
+                    </a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="page-title">Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-menu">
+                        <button class="user-menu-trigger" id="user-menu-trigger">
+                            <i class="fas fa-user-circle"></i>
+                            <span id="user-name">User</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="user-menu-dropdown" id="user-menu-dropdown">
+                            <a href="#profile" class="dropdown-item" data-page="profile">
+                                <i class="fas fa-user"></i> Profile
+                            </a>
+                            <a href="#change-password" class="dropdown-item" data-page="change-password">
+                                <i class="fas fa-key"></i> Change Password
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#logout" class="dropdown-item" id="logout-btn">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="content">
+                <!-- Dashboard Page -->
+                <div id="dashboard-page" class="page-content active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-folder-open"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="total-records">0</h3>
+                                <p>Total Records</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-paperclip"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="total-attachments">0</h3>
+                                <p>Total Attachments</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-plus"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="recent-records">0</h3>
+                                <p>Recent Records (30 days)</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-hard-drive"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="storage-used">0 MB</h3>
+                                <p>Storage Used</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="dashboard-widget">
+                            <h3>Recent Records</h3>
+                            <div id="recent-records-list" class="recent-list">
+                                <!-- Recent records will be loaded here -->
+                            </div>
+                        </div>
+                        <div class="dashboard-widget">
+                            <h3>Quick Actions</h3>
+                            <div class="quick-actions">
+                                <button class="btn btn-primary" data-page="add-record">
+                                    <i class="fas fa-plus"></i> Add New Record
+                                </button>
+                                <button class="btn btn-secondary" data-page="records">
+                                    <i class="fas fa-search"></i> Search Records
+                                </button>
+                                <button class="btn btn-secondary" data-page="reports">
+                                    <i class="fas fa-download"></i> Export Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Records Page -->
+                <div id="records-page" class="page-content">
+                    <div class="page-header">
+                        <h2>Records Management</h2>
+                        <div class="page-actions">
+                            <button class="btn btn-primary" data-page="add-record">
+                                <i class="fas fa-plus"></i> Add Record
+                            </button>
+                            <button class="btn btn-secondary" id="export-records-btn">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Search and Filters -->
+                    <div class="search-section">
+                        <div class="search-bar">
+                            <input type="text" id="records-search" placeholder="Search records..." class="search-input">
+                            <button class="btn btn-primary" id="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div class="filters">
+                            <select id="filter-status" class="form-control">
+                                <option value="">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="archived">Archived</option>
+                            </select>
+                            <select id="filter-civil-status" class="form-control">
+                                <option value="">All Civil Status</option>
+                                <option value="single">Single</option>
+                                <option value="married">Married</option>
+                                <option value="divorced">Divorced</option>
+                                <option value="widowed">Widowed</option>
+                                <option value="separated">Separated</option>
+                            </select>
+                            <select id="filter-gender" class="form-control">
+                                <option value="">All Genders</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Records Table -->
+                    <div class="table-container">
+                        <table class="data-table" id="records-table">
+                            <thead>
+                                <tr>
+                                    <th data-sort="unique_identifier">Record ID</th>
+                                    <th data-sort="first_name">Name</th>
+                                    <th data-sort="date_of_birth">Date of Birth</th>
+                                    <th data-sort="civil_status">Civil Status</th>
+                                    <th data-sort="created_at">Created</th>
+                                    <th data-sort="attachment_count">Attachments</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="records-tbody">
+                                <!-- Records will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-container">
+                        <div class="pagination-info">
+                            <span id="records-pagination-info">Showing 0 - 0 of 0 records</span>
+                        </div>
+                        <div class="pagination" id="records-pagination">
+                            <!-- Pagination buttons will be generated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add/Edit Record Page -->
+                <div id="add-record-page" class="page-content">
+                    <div class="page-header">
+                        <h2 id="record-form-title">Add New Record</h2>
+                        <div class="page-actions">
+                            <button class="btn btn-secondary" data-page="records">
+                                <i class="fas fa-arrow-left"></i> Back to Records
+                            </button>
+                        </div>
+                    </div>
+
+                    <form id="record-form" class="record-form">
+                        <input type="hidden" id="record-id" name="record_id">
+                        
+                        <div class="form-section">
+                            <h3>Personal Information</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="first-name">First Name *</label>
+                                    <input type="text" id="first-name" name="first_name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="last-name">Last Name *</label>
+                                    <input type="text" id="last-name" name="last_name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="middle-name">Middle Name</label>
+                                    <input type="text" id="middle-name" name="middle_name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="date-of-birth">Date of Birth</label>
+                                    <input type="date" id="date-of-birth" name="date_of_birth">
+                                </div>
+                                <div class="form-group">
+                                    <label for="civil-status">Civil Status</label>
+                                    <select id="civil-status" name="civil_status">
+                                        <option value="">Select Status</option>
+                                        <option value="single">Single</option>
+                                        <option value="married">Married</option>
+                                        <option value="divorced">Divorced</option>
+                                        <option value="widowed">Widowed</option>
+                                        <option value="separated">Separated</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="gender">Gender</label>
+                                    <select id="gender" name="gender">
+                                        <option value="">Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>Contact Information</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="phone-number">Phone Number</label>
+                                    <input type="tel" id="phone-number" name="phone_number">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email-address">Email Address</label>
+                                    <input type="email" id="email-address" name="email_address">
+                                </div>
+                                <div class="form-group">
+                                    <label for="nationality">Nationality</label>
+                                    <input type="text" id="nationality" name="nationality">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>Address Information</h3>
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    <label for="address-line1">Address Line 1</label>
+                                    <input type="text" id="address-line1" name="address_line1">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label for="address-line2">Address Line 2</label>
+                                    <input type="text" id="address-line2" name="address_line2">
+                                </div>
+                                <div class="form-group">
+                                    <label for="city">City</label>
+                                    <input type="text" id="city" name="city">
+                                </div>
+                                <div class="form-group">
+                                    <label for="state-province">State/Province</label>
+                                    <input type="text" id="state-province" name="state_province">
+                                </div>
+                                <div class="form-group">
+                                    <label for="postal-code">Postal Code</label>
+                                    <input type="text" id="postal-code" name="postal_code">
+                                </div>
+                                <div class="form-group">
+                                    <label for="country">Country</label>
+                                    <input type="text" id="country" name="country">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>Emergency Contact</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="emergency-contact-name">Emergency Contact Name</label>
+                                    <input type="text" id="emergency-contact-name" name="emergency_contact_name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="emergency-contact-phone">Emergency Contact Phone</label>
+                                    <input type="tel" id="emergency-contact-phone" name="emergency_contact_phone">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>Additional Notes</h3>
+                            <div class="form-group full-width">
+                                <label for="notes">Notes</label>
+                                <textarea id="notes" name="notes" rows="4"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Record
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-page="records">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Attachments Page will be added in next step -->
+                <div id="attachments-page" class="page-content">
+                    <div class="page-header">
+                        <h2>Attachments Management</h2>
+                    </div>
+                    <div class="content-placeholder">
+                        <p>Attachments management interface will be implemented here.</p>
+                    </div>
+                </div>
+
+                <!-- Reports Page will be added in next step -->
+                <div id="reports-page" class="page-content">
+                    <div class="page-header">
+                        <h2>Reports & Analytics</h2>
+                    </div>
+                    <div class="content-placeholder">
+                        <p>Reports and analytics interface will be implemented here.</p>
+                    </div>
+                </div>
+
+                <!-- Other pages placeholder -->
+                <div id="users-page" class="page-content admin-only">
+                    <div class="page-header">
+                        <h2>User Management</h2>
+                    </div>
+                    <div class="content-placeholder">
+                        <p>User management interface will be implemented here.</p>
+                    </div>
+                </div>
+
+                <div id="activity-logs-page" class="page-content admin-only">
+                    <div class="page-header">
+                        <h2>Activity Logs</h2>
+                    </div>
+                    <div class="content-placeholder">
+                        <p>Activity logs interface will be implemented here.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Record Details -->
+    <div id="record-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Record Details</h3>
+                <button class="modal-close" id="close-record-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="record-modal-body">
+                <!-- Record details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification System -->
+    <div id="notifications" class="notifications">
+        <!-- Notifications will be added here dynamically -->
+    </div>
+
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
